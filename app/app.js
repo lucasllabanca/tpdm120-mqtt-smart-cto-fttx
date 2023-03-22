@@ -1,43 +1,61 @@
-var mqtt = require('mqtt');
+import mqtt from "mqtt";
 
 const servidorMqtt = "test.mosquitto.org";
-const clienteCentralControle = 'SmartCTOFTTx-Client';
-
-var topicos = ["smart/cto/fttx/#/clients/data", "smart/cto/fttx/#/temperature", "smart/cto/fttx/#/clients/umidade"];
+const clienteId = 'SmartCTOFTTx-Client';
+const topicos = ["smart/cto/fttx/clients/data/#", "smart/cto/fttx/temperatura/#", "smart/cto/fttx/umidade/#"];
 
 console.log('Iniciando aplicação MQTT');
 
-InserirSeparadorLogs();
+var clienteMqtt = mqtt.connect('mqtt://' + servidorMqtt, { clientId: clienteId });
 
-console.log(`Conectando dispositivo ao servidor MQTT: ${servidorMqtt}`);
-var clienteMqtt = mqtt.connect(`mqtt://${servidorMqtt}`, { clientId: clienteCentralControle });
-
-InserirSeparadorLogs();
-
-clienteMqtt.on('connect', function () {
-    console.log(`Cliente conectado ao servidor MQTT: ${servidorMqtt}`);
+clienteMqtt.on('message', function(topico, mensagem) {
+    console.log(`Mensagem recebida do tópico: ${topico}`);
+    console.log('\t', `Mensagem: ${mensagem}`);
 });
-
-clienteMqtt.on('error', function(error) {
-    console.log(`Não foi possível conectar ao servidor MQTT: ${servidorMqtt}. Erro: ${error}`);
+  
+clienteMqtt.on('connect', function () {
+    console.log(`Cliente '${clienteId}' conectado ao servidor MQTT: ${servidorMqtt}`, '\n');
+});
+    
+clienteMqtt.on('error', function(erro) {
+    console.log(`Não foi possível conectar o cliente '${clienteId}' ao servidor MQTT: ${servidorMqtt}. Erro: ${erro}`, '\n');
     process.exit(1);
 });
 
-InserirSeparadorLogs();
-
-console.log(`Inscrevendo cliente '${clienteCentralControle}' da central de controle no tópicos:`);
-topicos.forEach((topico, indice) => console.log(`    ${indice} - Tópico: ${topico}`));
+console.log(`Inscrevendo cliente '${clienteId}' ao(s) tópico(s):`);
+topicos.forEach((topico, indice) => console.log(`\t`, `${indice} - Tópico: ${topico}`));
 clienteMqtt.subscribe(topicos);
 
-InserirSeparadorLogs();
+setInterval(publicarDadosClientes, 10000);
+   
+function publicarDadosClientes() {
+    var dadosClientes = obterDadosClientes();
+    publicarMensagem('smart/cto/fttx/clients/data/1', JSON.stringify(dadosClientes));
+}
 
-clienteMqtt.on('message', function(topic, message) {
-    console.log("message is: " + message);
-    console.log("topic is: " + topic);
-});
+function publicarMensagem(topico, mensagem) {
+    if (clienteMqtt.connected == true) {
+        console.log(`Publicando mensagem no tópico: ${topico}`);
+        console.log('\t', `Mensagem: ${mensagem}`);
+        clienteMqtt.publish(topico, mensagem);
+    }
+    else {
+        console.log(`Cliente '${clienteId}' não conectado para publicar mensagem no tópico: ${topico}`);
+    }
+}
 
-function InserirSeparadorLogs() {
-    console.log();
-    console.log('------------------------------------------------------------------------------------------------------');
-    console.log();
+function obterDadosClientes() {
+
+    const dados = [
+        {
+            codigo: 1,
+            cliente: "João da Silva",
+            plano: "450MB",
+            download: 425.52,
+            upload: 175.25,
+            status: "Conectado"
+        }
+    ];
+
+    return dados;
 }

@@ -1,4 +1,6 @@
 {
+  "main": "app.js",
+  "type":"module",
   "dependencies": {
     "mqtt": "^4.3.7"
   }
