@@ -10,25 +10,31 @@ const topicoControle = configuracao.get('topicoControle');
 const codigoCentralControle = Math.random().toString(16).slice(3);
 const clienteId = 'CentralControleClient_' + codigoCentralControle;
 
-console.log('Iniciando Central de Controle MQTT');
+console.log('\n', 'Iniciando Central de Controle MQTT');
 
 const clienteMqtt = mqtt.connect('mqtt://' + servidorMqtt, { clientId: clienteId });
 
 clienteMqtt.on('message', function(topico, mensagem) {
-    console.log(`Mensagem recebida do tópico: ${topico}`);
-    console.log('\t', `Mensagem: ${mensagem}`);
+
+    if (!mensagem)
+        return;
+
+    console.log('\n', '-------------------------------------------------------------------------------------------------------------');
+    console.log('\n', `Mensagem recebida do tópico: ${topico}`);
+    const dados = JSON.parse(mensagem.toString());
+    console.log('\n', dados);
 });
   
 clienteMqtt.on('connect', function () {
-    console.log(`Cliente '${clienteId}' conectado ao servidor MQTT: ${servidorMqtt}`, '\n');
+    console.log('\n', `Cliente '${clienteId}' conectado ao servidor MQTT: ${servidorMqtt}`, '\n');
 });
     
 clienteMqtt.on('error', function(erro) {
-    console.log(`Não foi possível conectar o cliente '${clienteId}' ao servidor MQTT: ${servidorMqtt}. Erro: ${erro}`, '\n');
+    console.log('\n', `Não foi possível conectar o cliente '${clienteId}' ao servidor MQTT: ${servidorMqtt}. Erro: ${erro}`);
     process.exit(1);
 });
 
-console.log(`Inscrevendo cliente '${clienteId}' ao(s) tópico(s):`);
+console.log('\n', `Inscrevendo cliente '${clienteId}' ao(s) tópico(s):`);
 topicosTelemetria.forEach((topico, indice) => {
     console.log(`\t`, `${indice} - Tópico: ${topico}/#`);
     clienteMqtt.subscribe(topico + '/#');

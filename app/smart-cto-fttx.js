@@ -34,26 +34,27 @@ function initCto() {
     console.log('\n', `Iniciando dispositivo SmartCTOFTTx_${codigoCto}`);
     
     clienteMqtt.on('message', function(topico, mensagem) {
+
+        if (!mensagem)
+            return;
+
+        console.log('\n', '--------------------------------------------------------------------------------------------------------------------------------------------------------------------');
         console.log('\n', `Mensagem recebida do tópico: ${topico}`);
-        console.log('\n', `Mensagem:`);
-        console.log('\n', mensagem.toString());
-
-
-
+        const dados = JSON.parse(mensagem.toString());
+        console.log('\n', dados);
     });
     
     clienteMqtt.on('connect', function () {
-        console.log('\n', `Cliente '${clienteId}' conectado ao servidor MQTT: ${servidorMqtt}`, '\n');
+        console.log('\n', `Cliente '${clienteId}' conectado ao servidor MQTT: ${servidorMqtt}`);
 
         inscreverCtoCentralControle();
-
         setInterval(publicarTelemetriaCto, 10000);
         setInterval(publicarTelemetriaClientes, 10000);
 
     });
         
     clienteMqtt.on('error', function(erro) {
-        console.log('\n', `Não foi possível conectar o cliente '${clienteId}' ao servidor MQTT: ${servidorMqtt}. Erro: ${erro}`, '\n');
+        console.log('\n', `Não foi possível conectar o cliente '${clienteId}' ao servidor MQTT: ${servidorMqtt}. Erro: ${erro}`);
         process.exit(1);
     });
     
@@ -63,23 +64,25 @@ function initCto() {
 }
 
 function inscreverCtoCentralControle() {
+    console.log('\n', '--------------------------------------------------------------------------------------------------------------------------------------------------------------------');
     console.log('\n', `Publicando subscrição da SmartCTOFTTx_${codigoCto} na Central de Controle pelo tópico: ${topicoSubscriptions}`)
     publicarMensagem(topicoSubscriptions, obterDadosCto())
 }
 
 function publicarTelemetriaCto() {
+    console.log('\n', '--------------------------------------------------------------------------------------------------------------------------------------------------------------------');
     console.log('\n', `Publicando telemetria da SmartCTOFTTx_${codigoCto} para a Central de Controle pelo tópico: ${topicoTelemetriaCto}`)
     publicarMensagem(topicoTelemetriaCto, obterTelemetriaCto());
 }
    
 function publicarTelemetriaClientes() {
+    console.log('\n', '--------------------------------------------------------------------------------------------------------------------------------------------------------------------');
     console.log('\n', `Publicando telemetria dos clientes da SmartCTOFTTx_${codigoCto} para a Central de Controle pelo tópico: ${topicoTelemetriaClientes}`)
     publicarMensagem(topicoTelemetriaClientes, obterTelemetriaClientes());
 }
 
 function publicarMensagem(topico, mensagem) {
     if (clienteMqtt.connected == true) {
-        console.log('\n', `Mensagem:`);
         console.log('\n', mensagem);
         clienteMqtt.publish(topico, JSON.stringify(mensagem));
     }
