@@ -36,7 +36,7 @@ function initCto() {
     clienteMqtt.on('message', function(topico, mensagem) {
         console.log('\n', `Mensagem recebida do tópico: ${topico}`);
         console.log('\n', `Mensagem:`);
-        console.log('\t', mensagem);
+        console.log('\n', mensagem.toString());
 
 
 
@@ -63,26 +63,25 @@ function initCto() {
 }
 
 function inscreverCtoCentralControle() {
-    console.log('\n', `Inscrevendo SmartCTOFTTx_${codigoCto} na Central de Controle`)
+    console.log('\n', `Publicando subscrição da SmartCTOFTTx_${codigoCto} na Central de Controle pelo tópico: ${topicoSubscriptions}`)
     publicarMensagem(topicoSubscriptions, obterDadosCto())
 }
 
 function publicarTelemetriaCto() {
-    console.log('\n', `Publicando telemetria da SmartCTOFTTx_${codigoCto} para a Central de Controle`)
+    console.log('\n', `Publicando telemetria da SmartCTOFTTx_${codigoCto} para a Central de Controle pelo tópico: ${topicoTelemetriaCto}`)
     publicarMensagem(topicoTelemetriaCto, obterTelemetriaCto());
 }
    
 function publicarTelemetriaClientes() {
-    console.log('\n', `Publicando telemetria dos clientes da SmartCTOFTTx_${codigoCto} para a Central de Controle`)
+    console.log('\n', `Publicando telemetria dos clientes da SmartCTOFTTx_${codigoCto} para a Central de Controle pelo tópico: ${topicoTelemetriaClientes}`)
     publicarMensagem(topicoTelemetriaClientes, obterTelemetriaClientes());
 }
 
 function publicarMensagem(topico, mensagem) {
     if (clienteMqtt.connected == true) {
-        console.log('\n', `Publicando mensagem no tópico: ${topico}`);
         console.log('\n', `Mensagem:`);
-        console.log('\t', mensagem);
-        clienteMqtt.publish(topico, mensagem);
+        console.log('\n', mensagem);
+        clienteMqtt.publish(topico, JSON.stringify(mensagem));
     }
     else {
         console.log('\n', `Cliente '${clienteId}' não conectado para publicar mensagem no tópico: ${topico}`);
@@ -98,7 +97,7 @@ function obterDadosCto() {
         topicoControleCto: topicoCentralControle
     }
 
-    return JSON.stringify(dados);
+    return dados;
 }
 
 function obterTelemetriaCto() {
@@ -111,7 +110,7 @@ function obterTelemetriaCto() {
         statusPorta: statusPorta
     }
 
-    return JSON.stringify(telemetriaCto);
+    return telemetriaCto;
 }
 
 function obterTelemetriaClientes() {
@@ -128,7 +127,7 @@ function obterTelemetriaClientes() {
 
     clientes = telemetriaClientes;
 
-    return JSON.stringify(telemetriaClientes); 
+    return telemetriaClientes; 
 }
 
 function criarClientesCto(quantidade) {
