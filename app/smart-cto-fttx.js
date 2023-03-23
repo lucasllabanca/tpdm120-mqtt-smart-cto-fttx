@@ -22,7 +22,7 @@ const topicoCentralControle = topicoControle + '/' + codigoCto;
 
 var clientes = [];
 
-const quantidadeClientes = obterInteiroAleatorio(1, 16);
+const quantidadeClientes = obterInteiroAleatorio(1, 4);
 
 const clienteMqtt = mqtt.connect('mqtt://' + servidorMqtt, { clientId: clienteId });
 
@@ -97,8 +97,8 @@ function obterTelemetriaClientes() {
         const conectado = obterInteiroAleatorio(0, 1) === 0;
         const plano = obterPlano(cliente.codigoPlano);
         const dados = preencherDadosNovoCliente(cliente.codigo, plano, conectado);
-        dados.download = obterInteiroAleatorio(plano.taxaDownloadMin, plano.taxaDownloadMax);
-        dados.upload = obterInteiroAleatorio(plano.taxaUploadMin, plano.taxaUploadMax);
+        dados.download = conectado ? obterInteiroAleatorio(plano.taxaDownloadMin, plano.taxaDownloadMax) : 0;
+        dados.upload = conectado ? obterInteiroAleatorio(plano.taxaUploadMin, plano.taxaUploadMax) : 0;
         telemetriaClientes.push(dados);
     });
 
