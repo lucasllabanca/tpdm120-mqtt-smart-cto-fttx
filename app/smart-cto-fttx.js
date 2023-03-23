@@ -20,7 +20,8 @@ const topicoSubscriptions = topicosTelemetria[2] + '/' + codigoCto;
 const topicoCentralControle = topicoControle + '/' + codigoCto;
 
 var clientes = [];
-var statusPorta = 'FECHADA';
+var descricaoStatusCto = 'CTO LIGADA COM PORTA FECHADA';
+var ctoLigada = true;
 
 const quantidadeClientes = obterInteiroAleatorio(1, 4);
 
@@ -35,13 +36,15 @@ function initCto() {
     
     clienteMqtt.on('message', function(topico, mensagem) {
 
-        if (!mensagem)
+        if (!ctoLigada || !mensagem)
             return;
 
         console.log('\n', '--------------------------------------------------------------------------------------------------------------------------------------------------------------------');
         console.log('\n', `Mensagem recebida do tópico: ${topico}`);
-        const dados = JSON.parse(mensagem.toString());
-        console.log('\n', dados);
+        const objetoMensagem = JSON.parse(mensagem.toString());
+        console.log('\n', objetoMensagem);
+
+        processarMensagemRecebida(objetoMensagem);
     });
     
     clienteMqtt.on('connect', function () {
@@ -50,7 +53,6 @@ function initCto() {
         inscreverCtoCentralControle();
         setInterval(publicarTelemetriaCto, 10000);
         setInterval(publicarTelemetriaClientes, 10000);
-
     });
         
     clienteMqtt.on('error', function(erro) {
@@ -64,18 +66,27 @@ function initCto() {
 }
 
 function inscreverCtoCentralControle() {
+    if (!ctoLigada)
+        return;
+
     console.log('\n', '--------------------------------------------------------------------------------------------------------------------------------------------------------------------');
     console.log('\n', `Publicando subscrição da SmartCTOFTTx_${codigoCto} na Central de Controle pelo tópico: ${topicoSubscriptions}`)
     publicarMensagem(topicoSubscriptions, obterDadosCto())
 }
 
 function publicarTelemetriaCto() {
+    if (!ctoLigada)
+        return;
+
     console.log('\n', '--------------------------------------------------------------------------------------------------------------------------------------------------------------------');
     console.log('\n', `Publicando telemetria da SmartCTOFTTx_${codigoCto} para a Central de Controle pelo tópico: ${topicoTelemetriaCto}`)
     publicarMensagem(topicoTelemetriaCto, obterTelemetriaCto());
 }
    
 function publicarTelemetriaClientes() {
+    if (!ctoLigada)
+        return;
+
     console.log('\n', '--------------------------------------------------------------------------------------------------------------------------------------------------------------------');
     console.log('\n', `Publicando telemetria dos clientes da SmartCTOFTTx_${codigoCto} para a Central de Controle pelo tópico: ${topicoTelemetriaClientes}`)
     publicarMensagem(topicoTelemetriaClientes, obterTelemetriaClientes());
@@ -89,6 +100,38 @@ function publicarMensagem(topico, mensagem) {
     else {
         console.log('\n', `Cliente '${clienteId}' não conectado para publicar mensagem no tópico: ${topico}`);
     }
+}
+
+function processarMensagemRecebida(mensagem) {
+
+    switch (mensagem.comando) {
+        case "configurarCliente":
+            configurarCliente(mensagem.configuracao);
+            break;
+
+        case "desligarCto":
+            desligarCto(mensagem.motivo);
+            break;
+
+        default:
+            return;
+    }
+}
+
+function configurarCliente(configuracao) {
+
+}
+
+function desligarCto(motivo) {
+    descricaoStatusCto = motivo;
+    publicarTelemetriaCto();
+
+    ctoLigada = false;
+    
+    setTimeout(() => {
+        process.exit(1);
+    }, 5000);
+    
 }
 
 function obterDadosCto() {
@@ -110,7 +153,7 @@ function obterTelemetriaCto() {
         quantidadeClientesConectados: clientes.filter(cliente => cliente.conectado).length,
         temperatura: obterInteiroAleatorio(-20, 85),
         umidade: obterInteiroAleatorio(20, 85) + '%',
-        statusPorta: statusPorta
+        statusPorta: descricaoStatusCto
     }
 
     return telemetriaCto;

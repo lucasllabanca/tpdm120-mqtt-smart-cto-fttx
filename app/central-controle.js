@@ -21,8 +21,8 @@ clienteMqtt.on('message', function(topico, mensagem) {
 
     console.log('\n', '-------------------------------------------------------------------------------------------------------------');
     console.log('\n', `Mensagem recebida do tópico: ${topico}`);
-    const dados = JSON.parse(mensagem.toString());
-    console.log('\n', dados);
+    const objetoMensagem = JSON.parse(mensagem.toString());
+    console.log('\n', objetoMensagem);
 });
   
 clienteMqtt.on('connect', function () {
