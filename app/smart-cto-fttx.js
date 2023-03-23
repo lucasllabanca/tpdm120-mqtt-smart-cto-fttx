@@ -94,7 +94,8 @@ function obterDadosCto() {
         codigoCto: codigoCto,
         quantidadeClientes: quantidadeClientes,
         topicoTelemetriaClientes: topicoTelemetriaClientes,
-        topicoTelemetriaCto: topicoTelemetriaCto
+        topicoTelemetriaCto: topicoTelemetriaCto,
+        topicoControleCto: topicoCentralControle
     }
 
     return JSON.stringify(dados);
