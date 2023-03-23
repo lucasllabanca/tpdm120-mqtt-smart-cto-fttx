@@ -3,8 +3,7 @@
     "prefixoClienteIdMqtt": "SmartCTOClient_",
     "topicosTelemetria": [
         "smart/cto/fttx/clientes", 
-        "smart/cto/fttx/temperatura", 
-        "smart/cto/fttx/umidade",
+        "smart/cto/fttx/telemetria", 
         "smart/cto/fttx/subscriptions"
     ],
     "topicoControle": "smart/cto/fttx/controle"

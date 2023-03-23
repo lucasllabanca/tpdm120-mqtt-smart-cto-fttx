@@ -13,14 +13,14 @@ const clienteId = prefixoClienteMqtt + codigoCto;
 
 //Tópicos únicos para envio de telemetria de cada dispositivo
 const topicoTelemetriaClientes = topicosTelemetria[0] + '/' + codigoCto;
-const topicoTemperatura = topicosTelemetria[1] + '/' + codigoCto;
-const topicoUmidade = topicosTelemetria[2] + '/' + codigoCto;
-const topicoSubscriptions = topicosTelemetria[3] + '/' + codigoCto;
+const topicoTelemetriaCto = topicosTelemetria[1] + '/' + codigoCto;
+const topicoSubscriptions = topicosTelemetria[2] + '/' + codigoCto;
 
 //Tópico para receber mensagens de comando da central de controle
 const topicoCentralControle = topicoControle + '/' + codigoCto;
 
 var clientes = [];
+var statusPorta = 'FECHADA';
 
 const quantidadeClientes = obterInteiroAleatorio(1, 4);
 
@@ -30,11 +30,16 @@ initCto();
 criarClientesCto(quantidadeClientes);
 
 function initCto() {
+
     console.log('\n', `Iniciando dispositivo SmartCTOFTTx_${codigoCto}`);
     
     clienteMqtt.on('message', function(topico, mensagem) {
         console.log('\n', `Mensagem recebida do tópico: ${topico}`);
-        console.log('\t', `Mensagem: ${mensagem}`);
+        console.log('\n', `Mensagem:`);
+        console.log('\t', mensagem);
+
+
+
     });
     
     clienteMqtt.on('connect', function () {
@@ -42,6 +47,7 @@ function initCto() {
 
         inscreverCtoCentralControle();
 
+        setInterval(publicarTelemetriaCto, 10000);
         setInterval(publicarTelemetriaClientes, 10000);
 
     });
@@ -59,6 +65,11 @@ function initCto() {
 function inscreverCtoCentralControle() {
     console.log('\n', `Inscrevendo SmartCTOFTTx_${codigoCto} na Central de Controle`)
     publicarMensagem(topicoSubscriptions, obterDadosCto())
+}
+
+function publicarTelemetriaCto() {
+    console.log('\n', `Publicando telemetria da SmartCTOFTTx_${codigoCto} para a Central de Controle`)
+    publicarMensagem(topicoTelemetriaCto, obterTelemetriaCto());
 }
    
 function publicarTelemetriaClientes() {
@@ -83,11 +94,23 @@ function obterDadosCto() {
         codigoCto: codigoCto,
         quantidadeClientes: quantidadeClientes,
         topicoTelemetriaClientes: topicoTelemetriaClientes,
-        topicoTemperatura: topicoTemperatura,
-        topicoUmidade: topicoUmidade
+        topicoTelemetriaCto: topicoTelemetriaCto
     }
 
     return JSON.stringify(dados);
+}
+
+function obterTelemetriaCto() {
+    var telemetriaCto = {
+        codigoCto: codigoCto,
+        quantidadeClientes: quantidadeClientes,
+        quantidadeClientesConectados: clientes.filter(cliente => cliente.conectado).length,
+        temperatura: obterInteiroAleatorio(-20, 85),
+        umidade: obterInteiroAleatorio(20, 85) + '%',
+        statusPorta: statusPorta
+    }
+
+    return JSON.stringify(telemetriaCto);
 }
 
 function obterTelemetriaClientes() {
@@ -101,6 +124,8 @@ function obterTelemetriaClientes() {
         dados.upload = conectado ? obterInteiroAleatorio(plano.taxaUploadMin, plano.taxaUploadMax) : 0;
         telemetriaClientes.push(dados);
     });
+
+    clientes = telemetriaClientes;
 
     return JSON.stringify(telemetriaClientes); 
 }
@@ -142,6 +167,7 @@ function preencherDadosNovoCliente(codigo, plano, conectado) {
         plano: plano.plano,
         download: plano.taxaDownloadMax,
         upload: plano.taxaUploadMax,
+        conectado: conectado,
         status: conectado ? "CONECTADO" : "NÃO CONECTADO"
     };
 }
