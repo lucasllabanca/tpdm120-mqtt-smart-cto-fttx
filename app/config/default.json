@@ -2,7 +2,7 @@
     "servidorMqtt": "test.mosquitto.org",
     "prefixoClienteIdMqtt": "SmartCTOClient_",
     "topicosTelemetria": [
-        "smart/cto/fttx/clientes/data", 
+        "smart/cto/fttx/clientes", 
         "smart/cto/fttx/temperatura", 
         "smart/cto/fttx/umidade",
         "smart/cto/fttx/subscriptions"

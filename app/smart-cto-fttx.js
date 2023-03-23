@@ -12,7 +12,7 @@ const codigoCto = obterCodigoAleatorio();
 const clienteId = prefixoClienteMqtt + codigoCto;
 
 //Tópicos únicos para envio de telemetria de cada dispositivo
-const topicoDadosClientes = topicosTelemetria[0] + '/' + codigoCto;
+const topicoTelemetriaClientes = topicosTelemetria[0] + '/' + codigoCto;
 const topicoTemperatura = topicosTelemetria[1] + '/' + codigoCto;
 const topicoUmidade = topicosTelemetria[2] + '/' + codigoCto;
 const topicoSubscriptions = topicosTelemetria[3] + '/' + codigoCto;
@@ -20,13 +20,14 @@ const topicoSubscriptions = topicosTelemetria[3] + '/' + codigoCto;
 //Tópico para receber mensagens de comando da central de controle
 const topicoCentralControle = topicoControle + '/' + codigoCto;
 
+var clientes = [];
+
 const quantidadeClientes = obterInteiroAleatorio(1, 16);
 
 const clienteMqtt = mqtt.connect('mqtt://' + servidorMqtt, { clientId: clienteId });
 
 initCto();
-criarPlanos();
-criarClientesCto();
+criarClientesCto(quantidadeClientes);
 
 function initCto() {
     console.log('\n', `Iniciando dispositivo SmartCTOFTTx_${codigoCto}`);
@@ -62,7 +63,7 @@ function inscreverCtoCentralControle() {
    
 function publicarTelemetriaClientes() {
     console.log('\n', `Publicando telemetria dos clientes da SmartCTOFTTx_${codigoCto} para a Central de Controle`)
-    publicarMensagem(topicoDadosClientes, obterTelemetriaClientes());
+    publicarMensagem(topicoTelemetriaClientes, obterTelemetriaClientes());
 }
 
 function publicarMensagem(topico, mensagem) {
@@ -81,7 +82,7 @@ function obterDadosCto() {
     const dados = {
         codigoCto: codigoCto,
         quantidadeClientes: quantidadeClientes,
-        topicoDadosClientes: topicoDadosClientes,
+        topicoTelemetriaClientes: topicoTelemetriaClientes,
         topicoTemperatura: topicoTemperatura,
         topicoUmidade: topicoUmidade
     }
@@ -91,57 +92,58 @@ function obterDadosCto() {
 
 function obterTelemetriaClientes() {
     var telemetriaClientes = [];
-
+    
     clientes.forEach(cliente => {
         const conectado = obterInteiroAleatorio(0, 1) === 0;
-        const dados = preencherDadosNovoCliente(cliente.codigo, cliente.plano, conectado);
-        dados.download = obterInteiroAleatorio(cliente.plano.taxaDownloadMin, cliente.plano.taxaDownloadMax);
-        dados.upload = obterInteiroAleatorio(cliente.plano.taxaUploadMin, cliente.plano.taxaUploadMax);
+        const plano = obterPlano(cliente.codigoPlano);
+        const dados = preencherDadosNovoCliente(cliente.codigo, plano, conectado);
+        dados.download = obterInteiroAleatorio(plano.taxaDownloadMin, plano.taxaDownloadMax);
+        dados.upload = obterInteiroAleatorio(plano.taxaUploadMin, plano.taxaUploadMax);
         telemetriaClientes.push(dados);
     });
 
     return JSON.stringify(telemetriaClientes); 
 }
 
-var clientes = [];
-var planos = [];
-
-function criarClientesCto() {
-    for (i = 0; i < quantidadeClientes; i++) {
+function criarClientesCto(quantidade) {
+    for (i = 0; i < quantidade; i++) {
         const cliente = obterNovoCliente();
         clientes.push(cliente);
     }
 }
 
-function criarPlanos() {
+function obterPlano(codigo) {
+    var planos = [];
+    
     planos.push({ codigo: 1, plano: '300MB', taxaDownloadMin: 30, taxaDownloadMax: 300, taxaUploadMin: 15, taxaUploadMax: 150 });
     planos.push({ codigo: 2, plano: '400MB', taxaDownloadMin: 40, taxaDownloadMax: 400, taxaUploadMin: 20, taxaUploadMax: 200 });
     planos.push({ codigo: 3, plano: '500MB', taxaDownloadMin: 50, taxaDownloadMax: 500, taxaUploadMin: 25, taxaUploadMax: 250 });
     planos.push({ codigo: 4, plano: '1GB', taxaDownloadMin: 100, taxaDownloadMax: 1000, taxaUploadMin: 50, taxaUploadMax: 500 });
+
+    return planos.find(plano => plano.codigo = codigo);;
 }
 
 function obterNovoCliente() {
 
     const codigo = obterCodigoAleatorio();
     const codigoPlano = obterInteiroAleatorio(1, 4);
-    const plano = planos.find(plano => plano.codigo = codigoPlano);
+    const plano = obterPlano(codigoPlano);
     const conectado = obterInteiroAleatorio(0, 1) === 0;
     const dados = preencherDadosNovoCliente(codigo, plano, conectado);
     return dados;
 }
 
 function preencherDadosNovoCliente(codigo, plano, conectado) {
-    return [
-        {
-            codigo: codigo,
-            codigoCto: codigoCto,
-            cliente: `Cliente ${codigo}`,
-            plano: plano.plano,
-            download: plano.taxaDownloadMax,
-            upload: plano.taxaUploadMax,
-            status: conectado ? "CONECTADO" : "NÃO CONECTADO"
-        }
-    ];
+    return {
+        codigo: codigo,
+        codigoCto: codigoCto,
+        cliente: `Cliente ${codigo}`,
+        codigoPlano: plano.codigo,
+        plano: plano.plano,
+        download: plano.taxaDownloadMax,
+        upload: plano.taxaUploadMax,
+        status: conectado ? "CONECTADO" : "NÃO CONECTADO"
+    };
 }
 
 function obterInteiroAleatorio(min, max) {
@@ -151,5 +153,5 @@ function obterInteiroAleatorio(min, max) {
 }
 
 function obterCodigoAleatorio() {
-    Math.random().toString(16).slice(3);
+    return Math.random().toString(16).slice(3);
 }
