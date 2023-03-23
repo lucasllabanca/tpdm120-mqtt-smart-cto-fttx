@@ -12,7 +12,7 @@ const clienteId = 'CentralControleClient_' + codigoCentralControle;
 
 console.log('Iniciando Central de Controle MQTT');
 
-var clienteMqtt = mqtt.connect('mqtt://' + servidorMqtt, { clientId: clienteId });
+const clienteMqtt = mqtt.connect('mqtt://' + servidorMqtt, { clientId: clienteId });
 
 clienteMqtt.on('message', function(topico, mensagem) {
     console.log(`Mensagem recebida do tópico: ${topico}`);

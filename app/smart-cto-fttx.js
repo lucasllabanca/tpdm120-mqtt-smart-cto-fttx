@@ -20,28 +20,43 @@ const topicoSubscriptions = topicosTelemetria[3] + '/' + codigoCto;
 //Tópico para receber mensagens de comando da central de controle
 const topicoCentralControle = topicoControle + '/' + codigoCto;
 
-console.log('\n', `Iniciando dispositivo SmartCTOFTTx: ${codigoCto}`);
+const quantidadeClientes = getRandomInt(1, 16);
 
-var clienteMqtt = mqtt.connect('mqtt://' + servidorMqtt, { clientId: clienteId });
+const clienteMqtt = mqtt.connect('mqtt://' + servidorMqtt, { clientId: clienteId });
 
-clienteMqtt.on('message', function(topico, mensagem) {
-    console.log('\n', `Mensagem recebida do tópico: ${topico}`);
-    console.log('\t', `Mensagem: ${mensagem}`);
-});
-  
-clienteMqtt.on('connect', function () {
-    console.log('\n', `Cliente '${clienteId}' conectado ao servidor MQTT: ${servidorMqtt}`, '\n');
-});
+initCto();
+
+function initCto() {
+    console.log('\n', `Iniciando dispositivo SmartCTOFTTx_${codigoCto}`);
     
-clienteMqtt.on('error', function(erro) {
-    console.log('\n', `Não foi possível conectar o cliente '${clienteId}' ao servidor MQTT: ${servidorMqtt}. Erro: ${erro}`, '\n');
-    process.exit(1);
-});
+    clienteMqtt.on('message', function(topico, mensagem) {
+        console.log('\n', `Mensagem recebida do tópico: ${topico}`);
+        console.log('\t', `Mensagem: ${mensagem}`);
+    });
+    
+    clienteMqtt.on('connect', function () {
+        console.log('\n', `Cliente '${clienteId}' conectado ao servidor MQTT: ${servidorMqtt}`, '\n');
 
-console.log('\n', `Inscrevendo cliente '${clienteId}' ao tópico de controle: ${topicoCentralControle}`);
-clienteMqtt.subscribe(topicoCentralControle);
+        inscreverCtoCentralControle();
 
-setInterval(publicarDadosClientes, 10000);
+    });
+        
+    clienteMqtt.on('error', function(erro) {
+        console.log('\n', `Não foi possível conectar o cliente '${clienteId}' ao servidor MQTT: ${servidorMqtt}. Erro: ${erro}`, '\n');
+        process.exit(1);
+    });
+    
+    console.log('\n', `Inscrevendo cliente '${clienteId}' ao tópico de controle: ${topicoCentralControle}`);
+    clienteMqtt.subscribe(topicoCentralControle);
+
+}
+
+function inscreverCtoCentralControle() {
+    console.log('\n', `Inscrevendo SmartCTOFTTx_${codigoCto} na Central de Controle`)
+    publicarMensagem(topicoSubscriptions, obterDadosCto())
+}
+
+//setInterval(publicarDadosClientes, 10000);
    
 function publicarDadosClientes() {
     var dadosClientes = obterDadosClientes();
@@ -51,7 +66,8 @@ function publicarDadosClientes() {
 function publicarMensagem(topico, mensagem) {
     if (clienteMqtt.connected == true) {
         console.log('\n', `Publicando mensagem no tópico: ${topico}`);
-        console.log('\t', `Mensagem: ${mensagem}`);
+        console.log('\n', `Mensagem:`);
+        console.log('\t', mensagem);
         clienteMqtt.publish(topico, mensagem);
     }
     else {
@@ -59,7 +75,21 @@ function publicarMensagem(topico, mensagem) {
     }
 }
 
-function obterDadosClientes() {
+function obterDadosCto() {
+    const dados = {
+        codigoCto: codigoCto,
+        quantidadeClientes: quantidadeClientes,
+        topicoDadosClientes: topicoDadosClientes,
+        topicoTemperatura: topicoTemperatura,
+        topicoUmidade: topicoUmidade
+    }
+
+    return JSON.stringify(dados);
+}
+
+
+
+function obter() {
 
     const dados = [
         {
@@ -73,4 +103,10 @@ function obterDadosClientes() {
     ];
 
     return dados;
+}
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
