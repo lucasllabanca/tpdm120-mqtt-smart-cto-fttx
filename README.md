@@ -31,7 +31,6 @@
 ```
 
 **Desligar CTO informando um motivo qualquer** 
-**Ex.:**
 ```json
 {
   "comando": "desligarCto",
@@ -40,7 +39,6 @@
 ```
 
 **Alterar o status do sensor de ruptura para ativado (true) ou desativado (false)**
-**Ex.:**
 ```json
 {
   "comando": "alterarSensorRuptura",
@@ -49,7 +47,6 @@
 ```
 
 **Alterar a temperatura em Cº atual de operação da CTO para qualquer valor inteiro**
-**Ex.:**
 ```json
 {
   "comando": "alterarTemperatura",
@@ -58,7 +55,6 @@
 ```
 
 **Alterar a umidade relativa do ar dentro da CTO para qualquer valor inteiro entre 0 e 100**
-**Ex.:**
 ```json
 {
   "comando": "alterarUmidade",
