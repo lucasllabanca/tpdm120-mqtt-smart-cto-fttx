@@ -87,7 +87,7 @@ function inscreverCtoCentralControle() {
     publicarMensagem(topicoSubscriptions, obterDadosCto())
 }
 
-function publicarTelemetriaCto(desligamento = false) {
+function publicarTelemetriaCto(desligamento) {
     if (!ctoLigada)
         return;
 
@@ -204,7 +204,7 @@ function obterDadosCto() {
 
 function obterTelemetriaCto(desligamento) {
 
-    if (!desligamento) {
+    if (typeof desligamento != 'boolean') {
         temperatura += obterInteiroAleatorio(-1, 1);
         umidade += obterInteiroAleatorio(-1, 1);
     

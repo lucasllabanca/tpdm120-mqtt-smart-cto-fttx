@@ -28,7 +28,7 @@ clienteMqtt.on('message', function(topico, mensagem) {
     const objetoMensagem = JSON.parse(mensagem.toString());
     console.log('\n', objetoMensagem);
     
-    if (topicosTelemetria.includes(topico))
+    if (topico.includes('smart/cto/fttx/telemetria'))
         processarMensagensCtos(objetoMensagem);
 });
   
@@ -64,9 +64,9 @@ function processarMensagensCtos(mensagem) {
 
 function verificarTemperatura(codigoCto, temperatura) {
     if (temperatura < temperaturaMinima || temperatura > temperaturaMaxima) {
-        publicarMensagem(topicoControle + codigoCto, {
+        publicarMensagem(topicoControle + '/' + codigoCto, {
             comando: "desligarCto",
-            valor: `DESATIVADA PELA CENTRAL POR MOTIVO DE TEMPERATURA:  ${temperatura}Cº`
+            valor: `DESATIVADA PELA CENTRAL POR MOTIVO DE TEMPERATURA: ${temperatura}Cº`
         });
         return false;
     }
@@ -78,7 +78,7 @@ function verificarUmidade(codigoCto, umidade) {
     if (umidade < umidadeMinima || umidade > umidadeMaxima) {
         publicarMensagem(topicoControle + codigoCto, {
             comando: "desligarCto",
-            valor: `DESATIVADA PELA CENTRAL POR MOTIVO DE UMIDADE:  ${umidade}%`
+            valor: `DESATIVADA PELA CENTRAL POR MOTIVO DE UMIDADE: ${umidade}%`
         });
         return false;
     }
