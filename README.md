@@ -78,6 +78,14 @@
 }
 ```
 
+**Alterar a carga da bateria da CTO para qualquer valor inteiro entre 0 e 100 (%)**
+```json
+{
+  "comando": "alterarCargaBateria",
+  "valor": 23
+}
+```
+
 ***Os comandos anteriores tem por motivo simular alterações no funcionamentos das CTOs para verificar seu comportamento diante do cenário por meio das telemetrias dos seus sensores e clientes sendos publicadas nos tópicos***
 
 ### Exemplo de telemetria enviada uma única vez pela CTO quando é ativada

@@ -101,7 +101,7 @@ function publicarTelemetriaClientes() {
         return;
 
     console.log('\n', '--------------------------------------------------------------------------------------------------------------------------------------------------------------------');
-    console.log('\n', `Publicando telemetria dos clientes da SmartCTOFTTx_${codigoCto} para a Central de Controle pelo tópico: ${topicoTelemetriaClientes}`)
+    console.log('\n', `Publicando telemetria dos clientes da SmartCTOFTTx_${codigoCto} para a Central de Controle pelo tópico: ${topicoTelemetriaClientes}`);
     publicarMensagem(topicoTelemetriaClientes, obterTelemetriaClientes());
 }
 
@@ -156,6 +156,14 @@ function processarMensagemRecebida(mensagem) {
         case "alterarStatusFibraOtica":
             if (typeof mensagem.valor == 'boolean')
                 statusFibraOtica = mensagem.valor;
+
+            break;
+
+        case "alterarCargaBateria":
+            if (typeof mensagem.valor == 'number') {
+                if (mensagem.valor >= 0 && mensagem.valor <= 100)
+                    cargaBateria = mensagem.valor;
+            }
 
             break;
 
@@ -217,19 +225,23 @@ function obterTelemetriaCto(desligamento) {
                 return;
             }
         }
+        else {
+            if (cargaBateria < 100)
+                cargaBateria += 1;
+        }
     }
 
     var telemetriaCto = {
         codigoCto: codigoCto,
-        quantidadeClientes: quantidadeClientes,
-        quantidadeClientesConectados: clientes.filter(cliente => cliente.conectado).length,
+        quantidadeClientes: quantidadeClientes + ' Clientes Totais',
+        quantidadeClientesConectados: clientes.filter(cliente => cliente.conectado).length + ' Clientes Conectados',
         temperatura: temperatura + 'Cº',
         umidade: umidade + '%',
-        statusSensorRuptura: sensorRupturaAtivado,
-        cargaBateria: cargaBateria,
-        statusRedeEletrica: statusRedeEletrica,
-        statusFibraOtica: statusFibraOtica,
-        statusConexaoMovel: statusFibraOtica ? false : true,
+        statusSensorRuptura: sensorRupturaAtivado ? 'ATIVADO: VANDALISMO, FURTO OU ROUBO' : 'DESATIVADO: OK',
+        cargaBateria: cargaBateria + '%',
+        statusRedeEletrica: statusRedeEletrica ? 'DISPONÍVEL' : 'INDISPONÍVEL: QUEDA DE ENERGIA',
+        statusFibraOtica: statusFibraOtica ? 'DISPONÍVEL' : 'INDISPONÍVEL: ROMPIMENTO',
+        statusConexaoMovel: statusFibraOtica ? 'NÃO USADA' : 'EM USO',
         conexaoRede: statusFibraOtica ? 'FIBRA ÓPTICA' : 'CHIP SIM 5G TIM',
         statusCto: descricaoStatusCto
     }

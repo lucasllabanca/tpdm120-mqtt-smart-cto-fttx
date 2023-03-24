@@ -76,7 +76,7 @@ function verificarTemperatura(codigoCto, temperatura) {
 
 function verificarUmidade(codigoCto, umidade) {
     if (umidade < umidadeMinima || umidade > umidadeMaxima) {
-        publicarMensagem(topicoControle + codigoCto, {
+        publicarMensagem(topicoControle + '/' + codigoCto, {
             comando: "desligarCto",
             valor: `DESATIVADA PELA CENTRAL POR MOTIVO DE UMIDADE: ${umidade}%`
         });
@@ -88,6 +88,8 @@ function verificarUmidade(codigoCto, umidade) {
 
 function publicarMensagem(topico, mensagem) {
     if (clienteMqtt.connected == true) {
+        console.log('\n', '--------------------------------------------------------------------------------------------------------------------------------------------------------------------');
+        console.log('\n', `Publicando comando para SmartCTO pelo tópico: ${topico}`);
         console.log('\n', mensagem);
         clienteMqtt.publish(topico, JSON.stringify(mensagem));
     }
