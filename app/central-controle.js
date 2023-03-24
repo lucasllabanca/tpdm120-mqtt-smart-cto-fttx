@@ -46,4 +46,50 @@ topicosTelemetria.forEach((topico, indice) => {
 
 function processarMensagensCtos(mensagem) {
 
+    const codigoCto = mensagem.codigoCto;
+    const temperatura = parseInt(mensagem.temperatura.replace('Cº', ''));
+    const umidade = parseInt(mensagem.umidade.replace('%', ''));
+    const statusSensorRuptura = mensagem.statusSensorRuptura;
+    
+    var temperaturaOk = true;
+    var umidadeOk = true;
+
+    temperaturaOk = verificarTemperatura(codigoCto, temperatura);
+
+    if (temperaturaOk)
+        umidadeOk = verificarUmidade(codigoCto, umidade);
+}
+
+function verificarTemperatura(codigoCto, temperatura) {
+    if (temperatura < temperaturaMinima || temperatura > temperaturaMaxima) {
+        publicarMensagem(topicoControle + codigoCto, {
+            comando: "desligarCto",
+            valor: `DESATIVADA PELA CENTRAL POR MOTIVO DE TEMPERATURA:  ${temperatura}Cº`
+        });
+        return false;
+    }
+    
+    return true;
+}
+
+function verificarUmidade(codigoCto, umidade) {
+    if (umidade < umidadeMinima || umidade > umidadeMaxima) {
+        publicarMensagem(topicoControle + codigoCto, {
+            comando: "desligarCto",
+            valor: `DESATIVADA PELA CENTRAL POR MOTIVO DE UMIDADE:  ${umidade}%`
+        });
+        return false;
+    }
+    
+    return true;
+}
+
+function publicarMensagem(topico, mensagem) {
+    if (clienteMqtt.connected == true) {
+        console.log('\n', mensagem);
+        clienteMqtt.publish(topico, JSON.stringify(mensagem));
+    }
+    else {
+        console.log('\n', `Cliente '${clienteId}' não conectado para publicar mensagem no tópico: ${topico}`);
+    }
 }

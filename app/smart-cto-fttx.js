@@ -80,13 +80,13 @@ function inscreverCtoCentralControle() {
     publicarMensagem(topicoSubscriptions, obterDadosCto())
 }
 
-function publicarTelemetriaCto() {
+function publicarTelemetriaCto(desligamento = false) {
     if (!ctoLigada)
         return;
 
     console.log('\n', '--------------------------------------------------------------------------------------------------------------------------------------------------------------------');
     console.log('\n', `Publicando telemetria da SmartCTOFTTx_${codigoCto} para a Central de Controle pelo tópico: ${topicoTelemetriaCto}`)
-    publicarMensagem(topicoTelemetriaCto, obterTelemetriaCto());
+    publicarMensagem(topicoTelemetriaCto, obterTelemetriaCto(desligamento));
 }
    
 function publicarTelemetriaClientes() {
@@ -120,8 +120,10 @@ function processarMensagemRecebida(mensagem) {
             break;
 
         case "alterarSensorRuptura":
-            if (typeof mensagem.valor == 'boolean')
+            if (typeof mensagem.valor == 'boolean') {
                 sensorRupturaAtivado = mensagem.valor;
+                desligarCto('DESLIGADA POR SENSOR DE RUPTURA ATIVADO, PROVÁVEL VANDALISMO OU ROUBO');
+            }
 
             break;
 
@@ -169,7 +171,7 @@ function configurarCliente(configuracao) {
 
 function desligarCto(motivo) {
     descricaoStatusCto = motivo;
-    publicarTelemetriaCto();
+    publicarTelemetriaCto(desligamento = true);
 
     ctoLigada = false;
     
@@ -191,17 +193,20 @@ function obterDadosCto() {
     return dados;
 }
 
-function obterTelemetriaCto() {
+function obterTelemetriaCto(desligamento) {
 
-    temperatura += obterInteiroAleatorio(-1, 1);
-    umidade += obterInteiroAleatorio(-1, 1);
+    if (!desligamento) {
+        temperatura += obterInteiroAleatorio(-1, 1);
+        umidade += obterInteiroAleatorio(-1, 1);
+    
+        if (!statusRedeEletrica) {
+            
+            cargaBateria -= 1;
 
-    if (!statusRedeEletrica) {
-        
-        cargaBateria -= 1;
-        if (cargaBateria <= 0) {
-            desligarCto('DESLIGADA POR FALTA DE REDE ELÉTRICA E BATERIA INTERNA ESGOTADA');
-            return;
+            if (cargaBateria <= 0) {
+                desligarCto('DESLIGADA POR FALTA DE REDE ELÉTRICA E BATERIA INTERNA ESGOTADA');
+                return;
+            }
         }
     }
 
@@ -209,7 +214,7 @@ function obterTelemetriaCto() {
         codigoCto: codigoCto,
         quantidadeClientes: quantidadeClientes,
         quantidadeClientesConectados: clientes.filter(cliente => cliente.conectado).length,
-        temperatura: temperatura,
+        temperatura: temperatura + 'Cº',
         umidade: umidade + '%',
         statusSensorRuptura: sensorRupturaAtivado,
         cargaBateria: cargaBateria,
