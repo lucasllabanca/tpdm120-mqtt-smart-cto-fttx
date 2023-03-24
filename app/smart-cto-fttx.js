@@ -222,7 +222,7 @@ function obterTelemetriaCto(desligamento) {
     
         if (!statusRedeEletrica) {
             
-            if (cargaBateria > 1)
+            if (cargaBateria >= 1)
                 cargaBateria -= 1;
 
             if (cargaBateria <= 0) {
@@ -236,6 +236,14 @@ function obterTelemetriaCto(desligamento) {
         }
     }
 
+    var statusBateria = 'CARREGADA';
+
+    if (statusRedeEletrica) {
+        statusBateria = (cargaBateria < 100 ? 'CARREGANDO' : 'CARREGADA') + ': SEM USO';
+    } else {
+        statusBateria = 'DESCARREGANDO: EM USO'
+    }
+
     var telemetriaCto = {
         codigoCto: codigoCto,
         quantidadeClientes: quantidadeClientes + ' Cliente(s) Totais',
@@ -244,6 +252,7 @@ function obterTelemetriaCto(desligamento) {
         umidade: umidade + '%',
         statusSensorRuptura: sensorRupturaAtivado ? 'ATIVADO: VANDALISMO, FURTO OU ROUBO' : 'DESATIVADO: OK',
         cargaBateria: cargaBateria + '%',
+        statusBateria: statusBateria,
         statusRedeEletrica: statusRedeEletrica ? 'DISPONÍVEL' : 'INDISPONÍVEL: QUEDA DE ENERGIA',
         statusFibraOtica: statusFibraOtica ? 'DISPONÍVEL' : 'INDISPONÍVEL: ROMPIMENTO',
         statusConexaoMovel: statusFibraOtica ? 'NÃO USADA' : 'EM USO',
