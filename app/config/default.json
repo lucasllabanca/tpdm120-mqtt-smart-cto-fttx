@@ -6,5 +6,9 @@
         "smart/cto/fttx/telemetria", 
         "smart/cto/fttx/subscriptions"
     ],
-    "topicoControle": "smart/cto/fttx/controle"
+    "topicoControle": "smart/cto/fttx/controle",
+    "temperaturaMaxima": 85,
+    "temperaturaMinima": -20,
+    "umidadeMaxima": 85,
+    "umidadeMinima": 12
   }

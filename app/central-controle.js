@@ -5,6 +5,10 @@ const configuracao = require('config');
 const servidorMqtt = configuracao.get('servidorMqtt');
 const topicosTelemetria = configuracao.get('topicosTelemetria');
 const topicoControle = configuracao.get('topicoControle');
+const temperaturaMaxima = configuracao.get('temperaturaMaxima');
+const temperaturaMinima = configuracao.get('temperaturaMinima');
+const umidadeMaxima = configuracao.get('umidadeMaxima');
+const umidadeMinima = configuracao.get('umidadeMinima');
 
 //Código único dispositivo e cliente MQTT
 const codigoCentralControle = Math.random().toString(16).slice(3);

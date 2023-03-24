@@ -19,10 +19,13 @@ const topicoSubscriptions = topicosTelemetria[2] + '/' + codigoCto;
 //Tópico para receber mensagens de comando da central de controle
 const topicoCentralControle = topicoControle + '/' + codigoCto;
 
+//Propriedades Operação CTO
 var clientes = [];
 var descricaoStatusCto = 'CTO LIGADA COM PORTA FECHADA';
 var ctoLigada = true;
-
+var temperatura = 20;
+var umidade = 45;
+var sensorRupturaAtivado = false;
 const quantidadeClientes = obterInteiroAleatorio(1, 4);
 
 const clienteMqtt = mqtt.connect('mqtt://' + servidorMqtt, { clientId: clienteId });
@@ -106,11 +109,23 @@ function processarMensagemRecebida(mensagem) {
 
     switch (mensagem.comando) {
         case "configurarCliente":
-            configurarCliente(mensagem.configuracao);
+            configurarCliente(mensagem.valor);
             break;
 
         case "desligarCto":
-            desligarCto(mensagem.motivo);
+            desligarCto(mensagem.valor);
+            break;
+
+        case "alterarSensorRuptura":
+            statusSensorRuptura = mensagem.valor;
+            break;
+
+        case "alterarTemperatura":
+            temperatura = mensagem.valor;
+            break;
+
+        case "alterarUmidade":
+            umidade = mensagem.valor;
             break;
 
         default:
@@ -147,13 +162,18 @@ function obterDadosCto() {
 }
 
 function obterTelemetriaCto() {
+
+    temperatura += obterInteiroAleatorio(-1, 1);
+    umidade += obterInteiroAleatorio(-1, 1);
+
     var telemetriaCto = {
         codigoCto: codigoCto,
         quantidadeClientes: quantidadeClientes,
         quantidadeClientesConectados: clientes.filter(cliente => cliente.conectado).length,
-        temperatura: obterInteiroAleatorio(-20, 85),
-        umidade: obterInteiroAleatorio(20, 85) + '%',
-        statusPorta: descricaoStatusCto
+        temperatura: temperatura,
+        umidade: umidade + '%',
+        statusSensorRuptura: sensorRupturaAtivado,
+        statusCto: descricaoStatusCto
     }
 
     return telemetriaCto;
