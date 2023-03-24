@@ -80,7 +80,8 @@
 
 ***Os comandos anteriores tem por motivo simular alterações no funcionamentos das CTOs para verificar seu comportamento diante do cenário por meio das telemetrias dos seus sensores e clientes sendos publicadas nos tópicos***
 
-**Exemplo de telemetria enviada uma única vez pela CTO quando é ativada - Topic: smart/cto/fttx/subscriptions/e90a3e382912**
+### Exemplo de telemetria enviada uma única vez pela CTO quando é ativada
+**Tópico: smart/cto/fttx/subscriptions/e90a3e382912**
 ```json
 {
   "codigoCto": "e90a3e382912",
@@ -92,7 +93,8 @@
 ```
 ***Essa telemetria no tópico de subscriptions tem como finalidade a identificação das CTOs ativadas e seus respectivos tópicos, para gerenciamento da central de controle***
 
-**Exemplo de telemetria de Clientes de uma CTO - Topic: smart/cto/fttx/clientes/91947e271b24**
+### Exemplo de telemetria de Clientes de uma CTO
+**Tópico: smart/cto/fttx/clientes/91947e271b24**
 ```json
  [
   {
@@ -120,7 +122,8 @@
 ]
 ```
 
-**Exemplo de telemetria de uma CTO - Topic: smart/cto/fttx/telemetria/91947e271b24**
+### Exemplo de telemetria de uma CTO
+***Tópico: smart/cto/fttx/telemetria/91947e271b24**
 ```json
 {
   "codigoCto": "91947e271b24",
