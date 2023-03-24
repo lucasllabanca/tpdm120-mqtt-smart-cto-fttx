@@ -27,6 +27,9 @@ clienteMqtt.on('message', function(topico, mensagem) {
     console.log('\n', `Mensagem recebida do tópico: ${topico}`);
     const objetoMensagem = JSON.parse(mensagem.toString());
     console.log('\n', objetoMensagem);
+    
+    if (topicosTelemetria.includes(topico))
+        processarMensagensCtos(objetoMensagem);
 });
   
 clienteMqtt.on('connect', function () {
@@ -38,7 +41,7 @@ clienteMqtt.on('error', function(erro) {
     process.exit(1);
 });
 
-console.log('\n', `Inscrevendo cliente '${clienteId}' ao(s) tópico(s):`);
+console.log('\n', `Inscrevendo cliente '${clienteId}' ao(s) tópico(s):`, '\n');
 topicosTelemetria.forEach((topico, indice) => {
     console.log(`\t`, `${indice} - Tópico: ${topico}/#`);
     clienteMqtt.subscribe(topico + '/#');
@@ -49,7 +52,6 @@ function processarMensagensCtos(mensagem) {
     const codigoCto = mensagem.codigoCto;
     const temperatura = parseInt(mensagem.temperatura.replace('Cº', ''));
     const umidade = parseInt(mensagem.umidade.replace('%', ''));
-    const statusSensorRuptura = mensagem.statusSensorRuptura;
     
     var temperaturaOk = true;
     var umidadeOk = true;
