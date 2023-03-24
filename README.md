@@ -1,6 +1,6 @@
-# TP DM120 - Smart CTO FTTx com MQTT
+# Smart CTO FTTx com MQTT
 
-## Trabalho Prático da Disciplina DM120 - Introdução e Desenvolvimento para IoT
+## Trabalho Prático DM120 - Introdução e Desenvolvimento para IoT
 
 **Servidor MQTT usado**
 1. **test.mosquitto.org**
