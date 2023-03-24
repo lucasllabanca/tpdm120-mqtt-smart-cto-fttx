@@ -31,6 +31,13 @@ var cargaBateria = 100;
 var sensorRupturaAtivado = false;
 const quantidadeClientes = obterInteiroAleatorio(1, 4);
 
+const planos = [
+    { codigo: 1, plano: '300MB', taxaDownloadMin: 30, taxaDownloadMax: 300, taxaUploadMin: 15, taxaUploadMax: 150 },
+    { codigo: 2, plano: '400MB', taxaDownloadMin: 40, taxaDownloadMax: 400, taxaUploadMin: 20, taxaUploadMax: 200 },
+    { codigo: 3, plano: '500MB', taxaDownloadMin: 50, taxaDownloadMax: 500, taxaUploadMin: 25, taxaUploadMax: 250 },
+    { codigo: 4, plano: '1GB', taxaDownloadMin: 100, taxaDownloadMax: 1000, taxaUploadMin: 50, taxaUploadMax: 500 }
+];
+
 const clienteMqtt = mqtt.connect('mqtt://' + servidorMqtt, { clientId: clienteId });
 
 initCto();
@@ -159,16 +166,18 @@ function processarMensagemRecebida(mensagem) {
 
 function configurarCliente(configuracao) {
     var plano = obterPlano(configuracao.codigoPlano);
-
+    console.log('Plano: ', plano);
     if (!plano)
         return;
 
-    var cliente = clientes.find(cliente => cliente.codigo = configuracao.codigo);
-
+    var cliente = clientes.find(cliente => cliente.codigo == configuracao.codigo);
+    console.log('Cliente antes: ', cliente);
     if (cliente) {
+        console.log('Cliente encontrado');
         cliente.codigoPlano = plano.codigo;
         cliente.plano = plano.plano;
     }
+    console.log('Cliente depois: ', cliente);
 }
 
 function desligarCto(motivo) {
@@ -255,14 +264,7 @@ function criarClientesCto(quantidade) {
 }
 
 function obterPlano(codigo) {
-    var planos = [];
-    
-    planos.push({ codigo: 1, plano: '300MB', taxaDownloadMin: 30, taxaDownloadMax: 300, taxaUploadMin: 15, taxaUploadMax: 150 });
-    planos.push({ codigo: 2, plano: '400MB', taxaDownloadMin: 40, taxaDownloadMax: 400, taxaUploadMin: 20, taxaUploadMax: 200 });
-    planos.push({ codigo: 3, plano: '500MB', taxaDownloadMin: 50, taxaDownloadMax: 500, taxaUploadMin: 25, taxaUploadMax: 250 });
-    planos.push({ codigo: 4, plano: '1GB', taxaDownloadMin: 100, taxaDownloadMax: 1000, taxaUploadMin: 50, taxaUploadMax: 500 });
-
-    return planos.find(plano => plano.codigo = codigo);;
+    return planos.find(plano => plano.codigo == codigo);
 }
 
 function obterNovoCliente() {
@@ -270,7 +272,7 @@ function obterNovoCliente() {
     const codigo = obterCodigoAleatorio();
     const codigoPlano = obterInteiroAleatorio(1, 4);
     const plano = obterPlano(codigoPlano);
-    const conectado = obterInteiroAleatorio(0, 1) === 0;
+    const conectado = obterInteiroAleatorio(0, 1) === 1;
     const dados = preencherDadosNovoCliente(codigo, plano, conectado);
     return dados;
 }
