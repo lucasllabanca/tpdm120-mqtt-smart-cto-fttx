@@ -166,18 +166,17 @@ function processarMensagemRecebida(mensagem) {
 
 function configurarCliente(configuracao) {
     var plano = obterPlano(configuracao.codigoPlano);
-    console.log('Plano: ', plano);
+
     if (!plano)
         return;
 
     var cliente = clientes.find(cliente => cliente.codigo == configuracao.codigo);
-    console.log('Cliente antes: ', cliente);
+    
     if (cliente) {
         console.log('Cliente encontrado');
         cliente.codigoPlano = plano.codigo;
         cliente.plano = plano.plano;
     }
-    console.log('Cliente depois: ', cliente);
 }
 
 function desligarCto(motivo) {
