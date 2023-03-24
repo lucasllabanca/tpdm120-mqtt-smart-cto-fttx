@@ -79,3 +79,61 @@
 ```
 
 ***Os comandos anteriores tem por motivo simular alterações no funcionamentos das CTOs para verificar seu comportamento diante do cenário por meio das telemetrias dos seus sensores e clientes sendos publicadas nos tópicos***
+
+**Exemplo de telemetria enviada uma única vez pela CTO quando é ativada - Topic: smart/cto/fttx/subscriptions/e90a3e382912**
+```json
+{
+  "codigoCto": "e90a3e382912",
+  "quantidadeClientes": 4,
+  "topicoTelemetriaClientes": "smart/cto/fttx/clientes/e90a3e382912",
+  "topicoTelemetriaCto": "smart/cto/fttx/telemetria/e90a3e382912",
+  "topicoControleCto": "smart/cto/fttx/controle/e90a3e382912"
+}
+```
+***Essa telemetria no tópico de subscriptions tem como finalidade a identificação das CTOs ativadas e seus respectivos tópicos, para gerenciamento da central de controle***
+
+**Exemplo de telemetria de Clientes de uma CTO - Topic: smart/cto/fttx/clientes/91947e271b24**
+```json
+ [
+  {
+    "codigo": "b2b8ec92943c",
+    "codigoCto": "91947e271b24",
+    "cliente": "Cliente b2b8ec92943c",
+    "codigoPlano": 4,
+    "plano": "300MB",
+    "download": 111,
+    "upload": 21,
+    "conectado": true,
+    "status": "CONECTADO"
+  },
+  {
+    "codigo": "521c7785aad4",
+    "codigoCto": "91947e271b24",
+    "cliente": "Cliente 521c7785aad4",
+    "codigoPlano": 3,
+    "plano": "300MB",
+    "download": 0,
+    "upload": 0,
+    "conectado": false,
+    "status": "NÃO CONECTADO"
+  }
+]
+```
+
+**Exemplo de telemetria de uma CTO - Topic: smart/cto/fttx/telemetria/91947e271b24**
+```json
+{
+  "codigoCto": "91947e271b24",
+  "quantidadeClientes": 2,
+  "quantidadeClientesConectados": 1,
+  "temperatura": 17,
+  "umidade": "48%",
+  "statusSensorRuptura": false,
+  "cargaBateria": 100,
+  "statusRedeEletrica": true,
+  "statusFibraOtica": true,
+  "statusConexaoMovel": false,
+  "conexaoRede": "FIBRA ÓPTICA",
+  "statusCto": "CTO LIGADA COM PORTA FECHADA"
+}
+```
