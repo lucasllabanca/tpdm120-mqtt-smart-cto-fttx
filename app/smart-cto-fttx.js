@@ -21,10 +21,13 @@ const topicoCentralControle = topicoControle + '/' + codigoCto;
 
 //Propriedades Operação CTO
 var clientes = [];
+var statusRedeEletrica = true;
+var statusFibraOtica = true;
 var descricaoStatusCto = 'CTO LIGADA COM PORTA FECHADA';
 var ctoLigada = true;
 var temperatura = 20;
 var umidade = 45;
+var cargaBateria = 100;
 var sensorRupturaAtivado = false;
 const quantidadeClientes = obterInteiroAleatorio(1, 4);
 
@@ -128,13 +131,22 @@ function processarMensagemRecebida(mensagem) {
             umidade = mensagem.valor;
             break;
 
+        case "alterarStatusRedeEletrica":
+            statusRedeEletrica = mensagem.valor;
+            break;
+
+        case "alterarStatusFibraOtica":
+            statusFibraOtica = mensagem.valor;
+            break;
+
         default:
             return;
     }
 }
 
 function configurarCliente(configuracao) {
-
+    var cliente = clientes.find(cliente => cliente.codigo = configuracao.codigo);
+    if (cliente) cliente.codigoPlano = configuracao.codigoPlano;
 }
 
 function desligarCto(motivo) {
@@ -166,6 +178,15 @@ function obterTelemetriaCto() {
     temperatura += obterInteiroAleatorio(-1, 1);
     umidade += obterInteiroAleatorio(-1, 1);
 
+    if (!statusRedeEletrica) {
+        
+        cargaBateria -= 1;
+        if (cargaBateria <= 0) {
+            desligarCto('DESLIGADA POR FALTA DE REDE ELÉTRICA E BATERIA INTERNA ESGOTADA');
+            return;
+        }
+    }
+
     var telemetriaCto = {
         codigoCto: codigoCto,
         quantidadeClientes: quantidadeClientes,
@@ -173,6 +194,11 @@ function obterTelemetriaCto() {
         temperatura: temperatura,
         umidade: umidade + '%',
         statusSensorRuptura: sensorRupturaAtivado,
+        cargaBateria: cargaBateria,
+        statusRedeEletrica: statusRedeEletrica,
+        statusFibraOtica: statusFibraOtica,
+        statusConexaoMovel: statusFibraOtica ? false : true,
+        conexaoRede: statusFibraOtica ? 'FIBRA ÓPTICA' : 'CHIP SIM 5G TIM',
         statusCto: descricaoStatusCto
     }
 

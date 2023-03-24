@@ -15,7 +15,7 @@
 
 ## Comandos possíveis que podem ser enviados às CTOs pelo tópico de controle 'smart/cto/fttx/controle/{codigo-unico-cto}'
 
-**Alterar plano de dados de qualquer cliente da CTO, passando o código único do cliente e o plano de internet como valor inteiro entre 1 e 4**
+**Alterar plano de dados de qualquer cliente da CTO, passando o código único do cliente (codigo) e o plano de internet (codigoPlano) como valor inteiro entre 1 e 4**
 1. **Plano: 300MB, Download Min.: 30, Download Max.: 300, Upload Min.: 15, Upload Max.: 150**
 2. **Plano: 400MB, Download Min.: 40, Download Max.: 400, Upload Min.: 20, Upload Max.: 200**
 3. **Plano: 500MB, Download Min.: 50, Download Max.: 500, Upload Min.: 25, Upload Max.: 250**
@@ -34,7 +34,7 @@
 ```json
 {
   "comando": "desligarCto",
-  "valor": "DESATIVADA PELA CENTRAL POR MOTIVOS DE SEGURANCA"
+  "valor": "DESLIGADA PELA CENTRAL POR MOTIVOS DE SEGURANÇA"
 }
 ```
 
@@ -61,3 +61,21 @@
   "valor": 80
 }
 ```
+
+**Alterar o status da rede elétrica que chega na CTO para disponível (true) ou indisponível (false)**
+```json
+{
+  "comando": "alterarStatusRedeEletrica",
+  "valor": false
+}
+```
+
+**Alterar o status da conexão de fibra óptica que chega na CTO para disponível (true) ou indisponível (false)**
+```json
+{
+  "comando": "alterarStatusFibraOtica",
+  "valor": true
+}
+```
+
+***Os comandos anteriores tem por motivo simular alterações no funcionamentos das CTOs para verificar seu comportamento diante do cenário por meio das telemetrias sendo publicadas para os seus sensores e para os seus clientes***

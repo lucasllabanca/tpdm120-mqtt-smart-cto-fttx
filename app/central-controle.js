@@ -43,3 +43,7 @@ topicosTelemetria.forEach((topico, indice) => {
     console.log(`\t`, `${indice} - Tópico: ${topico}/#`);
     clienteMqtt.subscribe(topico + '/#');
 });
+
+function processarMensagensCtos(mensagem) {
+
+}
