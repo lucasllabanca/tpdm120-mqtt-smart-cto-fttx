@@ -107,7 +107,7 @@ function publicarTelemetriaClientes() {
 
 function publicarMensagem(topico, mensagem) {
 
-    if (!topico || !mensagem)
+    if (!topico || !mensagem || topico === undefined || mensagem === undefined)
         return;
 
     if (clienteMqtt.connected == true) {
@@ -222,7 +222,7 @@ function obterTelemetriaCto(desligamento) {
     
         if (!statusRedeEletrica) {
             
-            if (bateria > 1)
+            if (cargaBateria > 1)
                 cargaBateria -= 1;
 
             if (cargaBateria <= 0) {
@@ -238,8 +238,8 @@ function obterTelemetriaCto(desligamento) {
 
     var telemetriaCto = {
         codigoCto: codigoCto,
-        quantidadeClientes: quantidadeClientes + ' Clientes Totais',
-        quantidadeClientesConectados: clientes.filter(cliente => cliente.conectado).length + ' Clientes Conectados',
+        quantidadeClientes: quantidadeClientes + ' Cliente(s) Totais',
+        quantidadeClientesConectados: clientes.filter(cliente => cliente.conectado).length + ' Cliente(s) Conectados',
         temperatura: temperatura + 'Cº',
         umidade: umidade + '%',
         statusSensorRuptura: sensorRupturaAtivado ? 'ATIVADO: VANDALISMO, FURTO OU ROUBO' : 'DESATIVADO: OK',

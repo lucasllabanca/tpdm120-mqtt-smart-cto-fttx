@@ -54,7 +54,7 @@
 }
 ```
 
-**Alterar a umidade relativa do ar dentro da CTO para qualquer valor inteiro entre 0 e 100**
+**Alterar a umidade relativa do ar dentro da CTO para qualquer valor inteiro entre 0 e 100 (%)**
 ```json
 {
   "comando": "alterarUmidade",

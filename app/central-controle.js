@@ -20,7 +20,7 @@ const clienteMqtt = mqtt.connect('mqtt://' + servidorMqtt, { clientId: clienteId
 
 clienteMqtt.on('message', function(topico, mensagem) {
 
-    if (!mensagem)
+    if (!mensagem || mensagem === undefined)
         return;
 
     console.log('\n', '-------------------------------------------------------------------------------------------------------------');
@@ -53,13 +53,12 @@ function processarMensagensCtos(mensagem) {
     const temperatura = parseInt(mensagem.temperatura.replace('Cº', ''));
     const umidade = parseInt(mensagem.umidade.replace('%', ''));
     
-    var temperaturaOk = true;
-    var umidadeOk = true;
+    var temperaturaOk = true; 
 
     temperaturaOk = verificarTemperatura(codigoCto, temperatura);
 
     if (temperaturaOk)
-        umidadeOk = verificarUmidade(codigoCto, umidade);
+        verificarUmidade(codigoCto, umidade);
 }
 
 function verificarTemperatura(codigoCto, temperatura) {
@@ -87,9 +86,9 @@ function verificarUmidade(codigoCto, umidade) {
 }
 
 function publicarMensagem(topico, mensagem) {
-    
-    if (!topico || !mensagem)
-    return;
+
+    if (!topico || !mensagem || topico === undefined || mensagem === undefined)
+        return;
 
     if (clienteMqtt.connected == true) {
         console.log('\n', '--------------------------------------------------------------------------------------------------------------------------------------------------------------------');
