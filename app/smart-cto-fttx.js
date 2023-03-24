@@ -173,7 +173,6 @@ function configurarCliente(configuracao) {
     var cliente = clientes.find(cliente => cliente.codigo == configuracao.codigo);
     
     if (cliente) {
-        console.log('Cliente encontrado');
         cliente.codigoPlano = plano.codigo;
         cliente.plano = plano.plano;
     }
