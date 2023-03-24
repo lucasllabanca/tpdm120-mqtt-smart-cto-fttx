@@ -106,6 +106,10 @@ function publicarTelemetriaClientes() {
 }
 
 function publicarMensagem(topico, mensagem) {
+
+    if (!topico || !mensagem)
+        return;
+
     if (clienteMqtt.connected == true) {
         console.log('\n', mensagem);
         clienteMqtt.publish(topico, JSON.stringify(mensagem));
@@ -218,7 +222,8 @@ function obterTelemetriaCto(desligamento) {
     
         if (!statusRedeEletrica) {
             
-            cargaBateria -= 1;
+            if (bateria > 1)
+                cargaBateria -= 1;
 
             if (cargaBateria <= 0) {
                 desligarCto('DESLIGADA POR FALTA DE REDE ELÉTRICA E BATERIA INTERNA ESGOTADA');

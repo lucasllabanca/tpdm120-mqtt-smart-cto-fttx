@@ -87,6 +87,10 @@ function verificarUmidade(codigoCto, umidade) {
 }
 
 function publicarMensagem(topico, mensagem) {
+    
+    if (!topico || !mensagem)
+    return;
+
     if (clienteMqtt.connected == true) {
         console.log('\n', '--------------------------------------------------------------------------------------------------------------------------------------------------------------------');
         console.log('\n', `Publicando comando para SmartCTO pelo tópico: ${topico}`);
