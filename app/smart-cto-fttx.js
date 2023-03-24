@@ -165,8 +165,10 @@ function configurarCliente(configuracao) {
 
     var cliente = clientes.find(cliente => cliente.codigo = configuracao.codigo);
 
-    if (cliente) 
-        cliente.codigoPlano = configuracao.codigoPlano;
+    if (cliente) {
+        cliente.codigoPlano = plano.codigo;
+        cliente.plano = plano.plano;
+    }
 }
 
 function desligarCto(motivo) {
