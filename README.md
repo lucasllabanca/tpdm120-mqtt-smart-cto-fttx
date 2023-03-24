@@ -78,4 +78,4 @@
 }
 ```
 
-***Os comandos anteriores tem por motivo simular alterações no funcionamentos das CTOs para verificar seu comportamento diante do cenário por meio das telemetrias sendo publicadas para os seus sensores e para os seus clientes***
+***Os comandos anteriores tem por motivo simular alterações no funcionamentos das CTOs para verificar seu comportamento diante do cenário por meio das telemetrias dos seus sensores e clientes sendos publicadas nos tópicos***

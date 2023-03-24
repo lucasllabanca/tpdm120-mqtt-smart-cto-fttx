@@ -120,23 +120,34 @@ function processarMensagemRecebida(mensagem) {
             break;
 
         case "alterarSensorRuptura":
-            statusSensorRuptura = mensagem.valor;
+            if (typeof mensagem.valor == 'boolean')
+                sensorRupturaAtivado = mensagem.valor;
+
             break;
 
         case "alterarTemperatura":
-            temperatura = mensagem.valor;
+            if (typeof mensagem.valor == 'number')
+                temperatura = mensagem.valor;
             break;
 
         case "alterarUmidade":
-            umidade = mensagem.valor;
+            if (typeof mensagem.valor == 'number') {
+                if (mensagem.valor >= 0 && mensagem.valor <= 100)
+                    umidade = mensagem.valor;
+            }
+
             break;
 
         case "alterarStatusRedeEletrica":
-            statusRedeEletrica = mensagem.valor;
+            if (typeof mensagem.valor == 'boolean')
+                statusRedeEletrica = mensagem.valor;
+
             break;
 
         case "alterarStatusFibraOtica":
-            statusFibraOtica = mensagem.valor;
+            if (typeof mensagem.valor == 'boolean')
+                statusFibraOtica = mensagem.valor;
+
             break;
 
         default:
@@ -145,8 +156,15 @@ function processarMensagemRecebida(mensagem) {
 }
 
 function configurarCliente(configuracao) {
+    var plano = obterPlano(configuracao.codigoPlano);
+
+    if (!plano)
+        return;
+
     var cliente = clientes.find(cliente => cliente.codigo = configuracao.codigo);
-    if (cliente) cliente.codigoPlano = configuracao.codigoPlano;
+
+    if (cliente) 
+        cliente.codigoPlano = configuracao.codigoPlano;
 }
 
 function desligarCto(motivo) {
