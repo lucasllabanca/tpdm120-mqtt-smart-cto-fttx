@@ -243,7 +243,7 @@ function obterTelemetriaCto(desligamento) {
     if (statusRedeEletrica) {
         statusBateria = (cargaBateria < 100 ? 'CARREGANDO' : 'CARREGADA') + ': SEM USO';
     } else {
-        statusBateria = 'DESCARREGANDO: EM USO'
+        statusBateria = cargaBateria <= 0 ? 'DESCARREGADA' : 'DESCARREGANDO: EM USO';
     }
 
     var telemetriaCto = {

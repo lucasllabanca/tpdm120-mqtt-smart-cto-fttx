@@ -70,19 +70,19 @@
 }
 ```
 
-**Alterar o status da conexão de fibra óptica que chega na CTO para disponível (true) ou indisponível (false)**
-```json
-{
-  "comando": "alterarStatusFibraOtica",
-  "valor": true
-}
-```
-
 **Alterar a carga da bateria da CTO para qualquer valor inteiro entre 0 e 100 (%)**
 ```json
 {
   "comando": "alterarCargaBateria",
   "valor": 23
+}
+```
+
+**Alterar o status da conexão de fibra óptica que chega na CTO para disponível (true) ou indisponível (false)**
+```json
+{
+  "comando": "alterarStatusFibraOtica",
+  "valor": true
 }
 ```
 
