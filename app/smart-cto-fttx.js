@@ -23,7 +23,8 @@ const topicoCentralControle = topicoControle + '/' + codigoCto;
 var clientes = [];
 var statusRedeEletrica = true;
 var statusFibraOtica = true;
-var descricaoStatusCto = 'CTO LIGADA COM PORTA FECHADA';
+var statusCto = true;
+var descricaoStatusCto = 'CTO LIGADA';
 var ctoLigada = true;
 var temperatura = 20;
 var umidade = 45;
@@ -191,6 +192,7 @@ function configurarCliente(configuracao) {
 }
 
 function desligarCto(motivo) {
+    statusCto = false;
     descricaoStatusCto = motivo;
     publicarTelemetriaCto(desligamento = true);
 
@@ -257,7 +259,8 @@ function obterTelemetriaCto(desligamento) {
         statusFibraOtica: statusFibraOtica ? 'DISPONÍVEL' : 'INDISPONÍVEL: ROMPIMENTO',
         statusConexaoMovel: statusFibraOtica ? 'NÃO USADA' : 'EM USO',
         conexaoRede: statusFibraOtica ? 'FIBRA ÓPTICA' : 'CHIP SIM 5G TIM',
-        statusCto: descricaoStatusCto
+        statusCto: statusCto,
+        descricaoStatusCto: descricaoStatusCto
     }
 
     return telemetriaCto;

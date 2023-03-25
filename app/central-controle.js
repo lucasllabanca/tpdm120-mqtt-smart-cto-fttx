@@ -28,7 +28,7 @@ clienteMqtt.on('message', function(topico, mensagem) {
     const objetoMensagem = JSON.parse(mensagem.toString());
     console.log('\n', objetoMensagem);
     
-    if (topico.includes('smart/cto/fttx/telemetria'))
+    if (topico.includes(topicosTelemetria[1])) //smart/cto/fttx/telemetria
         processarMensagensCtos(objetoMensagem);
 });
   
@@ -48,6 +48,11 @@ topicosTelemetria.forEach((topico, indice) => {
 });
 
 function processarMensagensCtos(mensagem) {
+
+    const statusCto = mensagem.statusCto;
+
+    if (!statusCto)
+        return;
 
     const codigoCto = mensagem.codigoCto;
     const temperatura = parseInt(mensagem.temperatura.replace('Cº', ''));
