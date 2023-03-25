@@ -267,7 +267,7 @@ function obterTelemetriaClientes() {
     var telemetriaClientes = [];
     
     clientes.forEach(cliente => {
-        const conectado = obterInteiroAleatorio(0, 1) === 0;
+        const conectado = obterInteiroAleatorio(0, 1) === 1 && statusFibraOtica;
         const plano = obterPlano(cliente.codigoPlano);
         const dados = preencherDadosNovoCliente(cliente.codigo, plano, conectado);
         dados.download = conectado ? obterInteiroAleatorio(plano.taxaDownloadMin, plano.taxaDownloadMax) : 0;

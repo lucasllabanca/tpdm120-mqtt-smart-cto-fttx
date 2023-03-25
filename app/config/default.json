@@ -9,6 +9,6 @@
     "topicoControle": "smart/cto/fttx/controle",
     "temperaturaMaxima": 85,
     "temperaturaMinima": -20,
-    "umidadeMaxima": 85,
+    "umidadeMaxima": 90,
     "umidadeMinima": 12
   }
